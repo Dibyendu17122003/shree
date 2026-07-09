@@ -1,0 +1,189 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #0a0a0f;
+    color: #fff;
+    overflow-x: hidden;
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    touch-action: manipulation;
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  }
+
+  #root {
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+  }
+
+  input, textarea, select {
+    font-size: 16px !important;
+  }
+
+  ::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: rgba(233, 30, 99, 0.2);
+    border-radius: 2px;
+  }
+}
+
+@layer components {
+  .glass {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .glass-strong {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+  }
+
+  .glass-card {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 24px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  }
+
+  .text-gradient {
+    background: linear-gradient(135deg, #ff6b9d, #e91e63, #ff4081, #ff6b9d);
+    background-size: 300% 300%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: gradient 3s ease infinite;
+  }
+
+  .glow {
+    box-shadow: 0 0 20px rgba(233, 30, 99, 0.3),
+                0 0 40px rgba(233, 30, 99, 0.1);
+  }
+
+  .glow-text {
+    text-shadow: 0 0 20px rgba(233, 30, 99, 0.5),
+                 0 0 40px rgba(233, 30, 99, 0.3),
+                 0 0 60px rgba(233, 30, 99, 0.1);
+  }
+
+  .no-select {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+
+  .btn-primary {
+    @apply px-8 py-4 rounded-2xl font-semibold text-lg transition-all duration-300
+           bg-gradient-to-r from-rose-500 to-pink-600
+           shadow-lg shadow-rose-500/25
+           active:scale-95;
+    touch-action: manipulation;
+  }
+
+  @media (hover: hover) {
+    .btn-primary {
+      @apply hover:from-rose-400 hover:to-pink-500 hover:shadow-xl hover:shadow-rose-500/40;
+    }
+  }
+
+  .btn-secondary {
+    @apply px-8 py-4 rounded-2xl font-semibold text-lg transition-all duration-300
+           glass-strong
+           active:scale-95;
+    touch-action: manipulation;
+  }
+
+  @media (hover: hover) {
+    .btn-secondary {
+      @apply hover:bg-white/20;
+    }
+  }
+
+  .option-btn {
+    @apply px-3 py-3 rounded-xl sm:rounded-2xl font-medium transition-all duration-150
+           glass
+           active:scale-[0.97] active:bg-rose-500/20 active:border-rose-500/50
+           cursor-pointer;
+    min-height: 44px;
+    touch-action: manipulation;
+  }
+
+  @media (hover: hover) {
+    .option-btn {
+      @apply hover:bg-rose-500/20 hover:border-rose-500/50;
+    }
+  }
+
+  .option-btn-selected {
+    @apply option-btn
+           bg-rose-500/20 border-rose-500/50
+           shadow-lg shadow-rose-500/20
+           ring-1 ring-rose-500/30;
+  }
+
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@layer utilities {
+  .perspective-1000 {
+    perspective: 1000px;
+  }
+
+  .preserve-3d {
+    transform-style: preserve-3d;
+  }
+
+  .backface-hidden {
+    backface-visibility: hidden;
+  }
+
+  .rotate-y-180 {
+    transform: rotateY(180deg);
+  }
+
+  .min-touch {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+@keyframes gradient {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
