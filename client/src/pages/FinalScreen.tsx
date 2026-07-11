@@ -33,20 +33,20 @@ function parseMeetTime(time: string): number {
 }
 
 const desktopPhotos = [
-  { radius: 230, startAngle: -25, tilt: -8, delay: 0.15 },
-  { radius: 240, startAngle: 38, tilt: 7, delay: 0.35 },
-  { radius: 220, startAngle: -118, tilt: -6, delay: 0.55 },
-  { radius: 235, startAngle: 148, tilt: 9, delay: 0.75 },
-  { radius: 195, startAngle: -72, tilt: -4, delay: 0.95 },
+  { radius: 280, startAngle: -20, tilt: -7, delay: 0.15 },
+  { radius: 290, startAngle: 52, tilt: 6, delay: 0.35 },
+  { radius: 270, startAngle: 124, tilt: -5, delay: 0.55 },
+  { radius: 285, startAngle: 196, tilt: 8, delay: 0.75 },
+  { radius: 260, startAngle: 268, tilt: -3, delay: 0.95 },
 ];
 
 const mobilePhotos = [
-  { radius: 120, startAngle: -22, tilt: -7, delay: 0.15 },
-  { radius: 125, startAngle: 42, tilt: 6, delay: 0.45 },
-  { radius: 115, startAngle: -138, tilt: -4, delay: 0.75 },
+  { radius: 135, startAngle: -15, tilt: -6, delay: 0.15 },
+  { radius: 140, startAngle: 105, tilt: 5, delay: 0.45 },
+  { radius: 130, startAngle: 225, tilt: -3, delay: 0.75 },
 ];
 
-function PolaroidCard({ src, tilt, width, height }: { src: string; tilt: number; width: number; height: number }) {
+function PolaroidCard({ src, tilt, width, height, bottom }: { src: string; tilt: number; width: number; height: number; bottom: number }) {
   return (
     <div
       className="bg-white rounded-[3px] shadow-2xl shadow-rose-900/30 overflow-hidden"
@@ -56,8 +56,8 @@ function PolaroidCard({ src, tilt, width, height }: { src: string; tilt: number;
         className="bg-cover bg-center bg-no-repeat"
         style={{ width, height, backgroundImage: `url(${src})` }}
       />
-      <div className="flex items-center justify-center" style={{ height: Math.round(height * 0.18) }}>
-        <div className="w-4 h-4 rounded-full bg-rose-200/30" />
+      <div className="flex items-center justify-center" style={{ height: bottom }}>
+        <div className="w-3 h-3 rounded-full bg-rose-200/20" />
       </div>
     </div>
   );
@@ -263,8 +263,9 @@ export default function FinalScreen() {
                       <PolaroidCard
                         src={`/images/photo${i + 1}.jpg`}
                         tilt={photo.tilt}
-                        width={180}
+                        width={200}
                         height={200}
+                        bottom={32}
                       />
                     </motion.div>
                   </motion.div>
@@ -296,8 +297,9 @@ export default function FinalScreen() {
                       <PolaroidCard
                         src={`/images/photo${i + 3}.jpg`}
                         tilt={photo.tilt}
-                        width={110}
-                        height={125}
+                        width={120}
+                        height={105}
+                        bottom={20}
                       />
                     </motion.div>
                   </motion.div>
