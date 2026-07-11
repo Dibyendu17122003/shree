@@ -41,9 +41,9 @@ const desktopPhotos = [
 ];
 
 const mobilePhotos = [
-  { radius: 135, startAngle: -15, tilt: -6, delay: 0.15 },
-  { radius: 140, startAngle: 105, tilt: 5, delay: 0.45 },
-  { radius: 130, startAngle: 225, tilt: -3, delay: 0.75 },
+  { radius: 125, startAngle: -15, tilt: -6, delay: 0.15 },
+  { radius: 130, startAngle: 105, tilt: 5, delay: 0.45 },
+  { radius: 120, startAngle: 225, tilt: -3, delay: 0.75 },
 ];
 
 function PolaroidCard({ src, tilt, width, height, bottom }: { src: string; tilt: number; width: number; height: number; bottom: number }) {
@@ -111,9 +111,7 @@ export default function FinalScreen() {
 
   const openLetter = useCallback(() => {
     setLetterOpened(true);
-    setTimeout(() => {
-      setShowLetter(true);
-    }, 800);
+    setTimeout(() => setShowLetter(true), 800);
   }, []);
 
   return (
@@ -190,9 +188,7 @@ export default function FinalScreen() {
                 transition={{ delay: 1.2 }}
               >
                 <p className="text-xs sm:text-sm text-white/40 mb-1 sm:mb-2">See you in...</p>
-                <p className="text-2xl sm:text-3xl font-mono text-gradient font-bold">
-                  {timeLeft}
-                </p>
+                <p className="text-2xl sm:text-3xl font-mono text-gradient font-bold">{timeLeft}</p>
                 {selectedDate && (
                   <p className="text-[10px] sm:text-xs text-white/30 mt-1 sm:mt-2 font-script">
                     {new Date(selectedDate).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
@@ -238,68 +234,64 @@ export default function FinalScreen() {
             </motion.p>
 
             <div className="relative flex items-center justify-center overflow-visible" style={{ minHeight: 360, minWidth: 360 }}>
-              {/* Desktop Photos — orbit around envelope */}
+              {/* Desktop Photos */}
               <div className="hidden sm:block absolute inset-0 overflow-visible pointer-events-none">
                 {desktopPhotos.map((photo, i) => (
                   <motion.div
                     key={i}
                     className="absolute pointer-events-auto cursor-pointer"
-                    style={{ left: '50%', top: '50%', transformOrigin: '0 0' }}
+                    style={{ left: '50%', top: '50%', transformOrigin: '0 0', willChange: 'transform' }}
                     initial={{ rotate: photo.startAngle, scale: 0, opacity: 0 }}
                     animate={{ rotate: photo.startAngle + 360, scale: 1, opacity: 1 }}
                     transition={{
-                      rotate: { duration: 40, repeat: Infinity, ease: 'linear', delay: 1.8 + photo.delay },
-                      scale: { duration: 0.5, type: 'spring', stiffness: 180, damping: 14, delay: 0.6 + photo.delay },
+                      rotate: { duration: 40, repeat: Infinity, ease: 'linear', delay: 2.5 },
+                      scale: { duration: 0.6, ease: 'easeOut', delay: 0.6 + photo.delay },
                       opacity: { duration: 0.4, delay: 0.6 + photo.delay },
                     }}
                     onClick={openLetter}
                   >
                     <motion.div
-                      style={{ transform: `translateX(${photo.radius}px)` }}
+                      style={{ transform: `translateX(${photo.radius}px)`, willChange: 'transform' }}
                       initial={{ rotate: -photo.startAngle }}
                       animate={{ rotate: -photo.startAngle - 360 }}
-                      transition={{ duration: 40, repeat: Infinity, ease: 'linear', delay: 1.8 + photo.delay }}
+                      transition={{ duration: 40, repeat: Infinity, ease: 'linear', delay: 2.5 }}
                     >
                       <PolaroidCard
                         src={`/images/photo${i + 1}.jpg`}
                         tilt={photo.tilt}
-                        width={240}
-                        height={180}
-                        bottom={30}
+                        width={240} height={180} bottom={30}
                       />
                     </motion.div>
                   </motion.div>
                 ))}
               </div>
 
-              {/* Mobile Photos — orbit around envelope */}
+              {/* Mobile Photos */}
               <div className="sm:hidden absolute inset-0 overflow-visible pointer-events-none">
                 {mobilePhotos.map((photo, i) => (
                   <motion.div
                     key={`m${i}`}
                     className="absolute pointer-events-auto cursor-pointer"
-                    style={{ left: '50%', top: '50%', transformOrigin: '0 0' }}
+                    style={{ left: '50%', top: '50%', transformOrigin: '0 0', willChange: 'transform' }}
                     initial={{ rotate: photo.startAngle, scale: 0, opacity: 0 }}
                     animate={{ rotate: photo.startAngle + 360, scale: 1, opacity: 1 }}
                     transition={{
-                      rotate: { duration: 35, repeat: Infinity, ease: 'linear', delay: 1.8 + photo.delay },
-                      scale: { duration: 0.4, type: 'spring', stiffness: 150, damping: 12, delay: 0.6 + photo.delay },
+                      rotate: { duration: 45, repeat: Infinity, ease: 'linear', delay: 2.5 },
+                      scale: { duration: 0.5, ease: 'easeOut', delay: 0.6 + photo.delay },
                       opacity: { duration: 0.35, delay: 0.6 + photo.delay },
                     }}
                     onClick={openLetter}
                   >
                     <motion.div
-                      style={{ transform: `translateX(${photo.radius}px)` }}
+                      style={{ transform: `translateX(${photo.radius}px)`, willChange: 'transform' }}
                       initial={{ rotate: -photo.startAngle }}
                       animate={{ rotate: -photo.startAngle - 360 }}
-                      transition={{ duration: 35, repeat: Infinity, ease: 'linear', delay: 1.8 + photo.delay }}
+                      transition={{ duration: 45, repeat: Infinity, ease: 'linear', delay: 2.5 }}
                     >
                       <PolaroidCard
                         src={`/images/photo${i + 3}.jpg`}
                         tilt={photo.tilt}
-                        width={130}
-                        height={100}
-                        bottom={18}
+                        width={130} height={100} bottom={18}
                       />
                     </motion.div>
                   </motion.div>
