@@ -207,33 +207,117 @@ export default function FinalScreen() {
                 I have something for you...
               </motion.p>
 
-              <motion.div
-                className="relative"
-                animate={{ y: [0, -8, 0] }}
-                transition={{ duration: 2, repeat: Infinity }}
-              >
-                <div className="w-40 h-28 sm:w-48 sm:h-36 relative">
-                  <div className="absolute inset-0 bg-gradient-to-b from-rose-400 to-pink-600 rounded-t-2xl sm:rounded-t-3xl rounded-b-md shadow-2xl shadow-rose-500/30" />
-                  <div className="absolute top-0 left-0 right-0 h-0">
-                    <div className="w-40 sm:w-48 h-14 sm:h-18 bg-gradient-to-b from-rose-300 to-rose-400"
+              <div className="relative">
+                {/* ==========================================
+                    POLAROID PHOTOS AROUND THE ENVELOPE
+                    Replace the placeholder bg gradients below
+                    with your own image URLs like:
+                    backgroundImage: 'url(https://your-image-url.jpg)'
+                    ========================================== */}
+                {[
+                  { angle: -18, x: -120, y: -50, delay: 0, rotate: -12 },
+                  { angle: 22, x: 120, y: -70, delay: 0.3, rotate: 8 },
+                  { angle: -25, x: -110, y: 70, delay: 0.6, rotate: -8 },
+                  { angle: 20, x: 110, y: 60, delay: 0.9, rotate: 10 },
+                  { angle: -15, x: -60, y: -110, delay: 1.2, rotate: -5 },
+                  { angle: 15, x: 60, y: -120, delay: 1.5, rotate: 6 },
+                ].map((photo, i) => (
+                  <motion.div
+                    key={i}
+                    className="absolute hidden sm:block"
+                    style={{ left: '50%', top: '50%' }}
+                    initial={{ opacity: 0, scale: 0.6 }}
+                    animate={{
+                      opacity: 1,
+                      scale: 1,
+                      x: photo.x,
+                      y: [photo.y, photo.y - 8, photo.y],
+                    }}
+                    transition={{
+                      opacity: { delay: 1.5 + photo.delay, duration: 0.5 },
+                      scale: { delay: 1.5 + photo.delay, duration: 0.5 },
+                      y: { duration: 3, repeat: Infinity, ease: 'easeInOut', delay: photo.delay },
+                    }}
+                    onClick={openLetter}
+                  >
+                    <div
+                      className="w-20 h-24 sm:w-24 sm:h-28 rounded-lg bg-cover bg-center shadow-xl"
                       style={{
-                        clipPath: 'polygon(0 100%, 50% 0%, 100% 100%)',
-                        transform: 'translateY(-0.5px)',
+                        // 🔁 REPLACE this background with YOUR IMAGE URL:
+                        backgroundImage: `url(https://picsum.photos/seed/${150 + i}/200/250)`,
+                        // Example: backgroundImage: 'url(https://your-image-url.jpg)',
+                        transform: `rotate(${photo.rotate}deg)`,
+                        border: '3px solid rgba(255,255,255,0.9)',
+                      }}
+                    >
+                      <div className="absolute inset-0 rounded-lg bg-gradient-to-t from-black/20 to-transparent" />
+                    </div>
+                  </motion.div>
+                ))}
+
+                {/* Mobile photos (simpler, 2 visible) */}
+                {[
+                  { x: -70, y: -40, delay: 0, rotate: -10 },
+                  { x: 70, y: -45, delay: 0.4, rotate: 8 },
+                  { x: -65, y: 45, delay: 0.8, rotate: -6 },
+                  { x: 65, y: 40, delay: 1.2, rotate: 7 },
+                ].map((photo, i) => (
+                  <motion.div
+                    key={`m${i}`}
+                    className="absolute sm:hidden"
+                    style={{ left: '50%', top: '50%' }}
+                    initial={{ opacity: 0, scale: 0.6 }}
+                    animate={{
+                      opacity: 1,
+                      scale: 1,
+                      x: photo.x,
+                      y: [photo.y, photo.y - 5, photo.y],
+                    }}
+                    transition={{
+                      opacity: { delay: 1.5 + photo.delay, duration: 0.5 },
+                      scale: { delay: 1.5 + photo.delay, duration: 0.5 },
+                      y: { duration: 2.5, repeat: Infinity, ease: 'easeInOut', delay: photo.delay },
+                    }}
+                    onClick={openLetter}
+                  >
+                    <div
+                      className="w-14 h-16 rounded-md bg-cover bg-center shadow-lg"
+                      style={{
+                        backgroundImage: `url(https://picsum.photos/seed/${200 + i}/150/200)`,
+                        transform: `rotate(${photo.rotate}deg)`,
+                        border: '2px solid rgba(255,255,255,0.9)',
                       }}
                     />
-                  </div>
-                  <motion.div
-                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-3xl sm:text-4xl"
-                    animate={{ scale: [1, 1.15, 1] }}
-                    transition={{ duration: 1.5, repeat: Infinity }}
-                  >
-                    💌
                   </motion.div>
-                  <div className="absolute bottom-3 sm:bottom-4 left-1/2 -translate-x-1/2">
-                    <div className="w-16 sm:w-24 h-0.5 sm:h-1 rounded-full bg-white/20" />
+                ))}
+
+                <motion.div
+                  animate={{ y: [0, -8, 0] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                >
+                  <div className="w-40 h-28 sm:w-48 sm:h-36 relative">
+                    <div className="absolute inset-0 bg-gradient-to-b from-rose-400 to-pink-600 rounded-t-2xl sm:rounded-t-3xl rounded-b-md shadow-2xl shadow-rose-500/30" />
+                    <div className="absolute top-0 left-0 right-0 h-0">
+                      <div className="w-40 sm:w-48 h-14 sm:h-18 bg-gradient-to-b from-rose-300 to-rose-400"
+                        style={{
+                          clipPath: 'polygon(0 100%, 50% 0%, 100% 100%)',
+                          transform: 'translateY(-0.5px)',
+                        }}
+                      />
+                    </div>
+                    <motion.div
+                      className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-3xl sm:text-4xl"
+                      animate={{ scale: [1, 1.15, 1] }}
+                      transition={{ duration: 1.5, repeat: Infinity }}
+                    >
+                      💌
+                    </motion.div>
+                    <div className="absolute bottom-3 sm:bottom-4 left-1/2 -translate-x-1/2">
+                      <div className="w-16 sm:w-24 h-0.5 sm:h-1 rounded-full bg-white/20" />
+                    </div>
                   </div>
-                </div>
-              </motion.div>
+                </motion.div>
+              </div>
 
               <motion.p
                 className="text-xs sm:text-sm text-white/40 mt-3 sm:mt-4"
