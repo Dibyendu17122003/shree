@@ -8,7 +8,6 @@ import sessionRoutes from './routes/session';
 import answerRoutes from './routes/answers';
 import analyticsRoutes from './routes/analytics';
 import adminRoutes from './routes/admin';
-import notificationRoutes from './routes/notification';
 import { apiLimiter } from './middleware/rateLimiter';
 import { seedAdmin } from './controllers/adminController';
 
@@ -29,7 +28,7 @@ app.use('/api/session', sessionRoutes);
 app.use('/api/answers', answerRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/analytics', analyticsRoutes);
-app.use('/api', notificationRoutes);
+
 
 app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });

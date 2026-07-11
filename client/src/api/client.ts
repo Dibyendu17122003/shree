@@ -52,9 +52,4 @@ export const adminApi = {
   exportData: (format: string) => api.get('/analytics/export', { params: { format }, responseType: 'blob' }).then(r => r.data),
 };
 
-export const notifyApi = {
-  completion: (sessionId: string, answers: Record<string, string>) =>
-    api.post('/notify-completion', { sessionId, answers }).then(r => r.data),
-};
-
 export default api;

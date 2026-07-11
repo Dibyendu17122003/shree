@@ -5,7 +5,6 @@ import SakuraPetals from '../components/animations/SakuraPetals';
 import Sparkles from '../components/animations/Sparkles';
 import ConfettiEffect from '../components/animations/ConfettiEffect';
 import { useSession } from '../hooks/useSession';
-import { notifyApi } from '../api/client';
 
 const loveLetter = `My Dearest Shree,
 
@@ -75,27 +74,27 @@ export default function FinalScreen() {
   const selectedTime = state.answers?.meet_time;
 
   const countdownTarget = useCallback(() => {
-    const target = new Date();
     if (selectedDate) {
-      const d = new Date(selectedDate);
-      target.setFullYear(d.getFullYear(), d.getMonth(), d.getDate());
-    } else {
-      target.setDate(target.getDate() + 7);
+      const parts = selectedDate.split('-');
+      const target = new Date(
+        parseInt(parts[0]),
+        parseInt(parts[1]) - 1,
+        parseInt(parts[2]),
+        parseMeetTime(selectedTime || ''),
+        0, 0, 0
+      );
+      return target;
     }
-    target.setHours(parseMeetTime(selectedTime || ''), 0, 0, 0);
-    return target;
+    const fallback = new Date();
+    fallback.setDate(fallback.getDate() + 7);
+    fallback.setHours(parseMeetTime(selectedTime || ''), 0, 0, 0);
+    return fallback;
   }, [selectedDate, selectedTime]);
 
   useEffect(() => {
     const timer = setTimeout(() => setShowEnvelope(true), 8000);
     return () => clearTimeout(timer);
   }, []);
-
-  useEffect(() => {
-    if (showEnvelope && state.sessionId && state.answers && Object.keys(state.answers).length > 0) {
-      notifyApi.completion(state.sessionId, state.answers).catch(() => {});
-    }
-  }, [showEnvelope]);
 
   useEffect(() => {
     const update = () => {
