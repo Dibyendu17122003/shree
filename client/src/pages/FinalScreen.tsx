@@ -5,6 +5,7 @@ import SakuraPetals from '../components/animations/SakuraPetals';
 import Sparkles from '../components/animations/Sparkles';
 import ConfettiEffect from '../components/animations/ConfettiEffect';
 import { useSession } from '../hooks/useSession';
+import { notifyApi } from '../api/client';
 
 const loveLetter = `My Dearest Shree,
 
@@ -89,6 +90,12 @@ export default function FinalScreen() {
     const timer = setTimeout(() => setShowEnvelope(true), 8000);
     return () => clearTimeout(timer);
   }, []);
+
+  useEffect(() => {
+    if (showEnvelope && state.sessionId && state.answers && Object.keys(state.answers).length > 0) {
+      notifyApi.completion(state.sessionId, state.answers).catch(() => {});
+    }
+  }, [showEnvelope]);
 
   useEffect(() => {
     const update = () => {
