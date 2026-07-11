@@ -220,7 +220,6 @@ export default function FinalScreen() {
                   { angle: -25, x: -110, y: 70, delay: 0.6, rotate: -8 },
                   { angle: 20, x: 110, y: 60, delay: 0.9, rotate: 10 },
                   { angle: -15, x: -60, y: -110, delay: 1.2, rotate: -5 },
-                  { angle: 15, x: 60, y: -120, delay: 1.5, rotate: 6 },
                 ].map((photo, i) => (
                   <motion.div
                     key={i}
@@ -259,7 +258,6 @@ export default function FinalScreen() {
                   { x: -70, y: -40, delay: 0, rotate: -10 },
                   { x: 70, y: -45, delay: 0.4, rotate: 8 },
                   { x: -65, y: 45, delay: 0.8, rotate: -6 },
-                  { x: 65, y: 40, delay: 1.2, rotate: 7 },
                 ].map((photo, i) => (
                   <motion.div
                     key={`m${i}`}
@@ -282,8 +280,7 @@ export default function FinalScreen() {
                     <div
                       className="w-14 h-16 rounded-md bg-cover bg-center shadow-lg"
                       style={{
-                        // 📷 Place your photo at: client/public/images/photo${i + 7}.jpg
-                        backgroundImage: `url(/images/photo${i + 7}.jpg)`,
+                        backgroundImage: `url(/images/photo${i + 3}.jpg)`,
                         transform: `rotate(${photo.rotate}deg)`,
                         border: '2px solid rgba(255,255,255,0.9)',
                       }}
