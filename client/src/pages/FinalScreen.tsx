@@ -79,11 +79,11 @@ function formatTime(time: string): string {
 function CountdownTile({ value, label }: { value: number; label: string }) {
   return (
     <div className="flex flex-col items-center">
-      <div className="relative overflow-hidden rounded-lg bg-white/[0.04] border border-white/[0.06] w-9 h-9 sm:w-12 sm:h-12 flex items-center justify-center shadow-lg shadow-rose-900/10">
+      <div className="relative overflow-hidden rounded-lg bg-white/[0.05] border border-white/[0.08] w-10 h-10 sm:w-14 sm:h-14 flex items-center justify-center shadow-lg shadow-rose-900/15">
         <AnimatePresence mode="popLayout">
           <motion.span
             key={value}
-            className="text-sm sm:text-lg font-bold tabular-nums text-gradient"
+            className="text-sm sm:text-xl font-bold tabular-nums text-gradient"
             initial={{ y: 12, opacity: 0, scale: 0.8 }}
             animate={{ y: 0, opacity: 1, scale: 1 }}
             exit={{ y: -12, opacity: 0, scale: 0.8 }}
@@ -93,7 +93,7 @@ function CountdownTile({ value, label }: { value: number; label: string }) {
           </motion.span>
         </AnimatePresence>
       </div>
-      <span className="text-[8px] sm:text-[10px] text-white/40 mt-1 uppercase tracking-widest font-medium">{label}</span>
+      <span className="text-[8px] sm:text-[11px] text-white/45 mt-1 uppercase tracking-widest font-semibold">{label}</span>
     </div>
   );
 }
@@ -168,7 +168,7 @@ export default function FinalScreen() {
             exit={{ opacity: 0 }}
             className="relative z-10 text-center px-4 w-full max-w-lg mx-auto flex flex-col items-center justify-center min-h-dvh py-4"
           >
-            <div className="flex flex-col items-center gap-2 sm:gap-3 w-full max-w-sm">
+            <div className="flex flex-col items-center gap-1.5 sm:gap-2.5 w-full max-w-sm">
               <motion.div
                 className="text-3xl sm:text-5xl"
                 animate={{ scale: [1, 1.15, 1], rotate: [0, -5, 5, 0] }}
@@ -213,32 +213,32 @@ export default function FinalScreen() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.9, duration: 0.5 }}
                 >
-                  <div className="flex-1 backdrop-blur-xl bg-white/[0.03] border border-white/[0.06] rounded-xl sm:rounded-2xl p-3 sm:p-4 shadow-xl shadow-rose-900/20">
-                    <div className="flex items-center justify-center gap-1 mb-1">
-                      <span className="text-sm">📅</span>
-                      <span className="text-[9px] sm:text-[10px] text-white/40 uppercase tracking-widest font-medium">Date</span>
+                  <div className="flex-1 backdrop-blur-xl bg-white/[0.06] border border-rose-500/15 rounded-xl sm:rounded-2xl p-3.5 sm:p-5 shadow-xl shadow-rose-900/30">
+                    <div className="flex items-center justify-center gap-1.5 mb-1.5">
+                      <span className="text-base">📅</span>
+                      <span className="text-[10px] sm:text-xs text-white/50 uppercase tracking-widest font-semibold">Date</span>
                     </div>
-                    <p className="text-[11px] sm:text-sm text-white/90 font-script leading-tight">
+                    <p className="text-xs sm:text-base text-white/90 font-script leading-snug">
                       {formatDate(selectedDate)}
                     </p>
                     {selectedTime && (
-                      <div className="mt-1 pt-1 border-t border-white/[0.06]">
-                        <p className="text-[11px] sm:text-xs text-rose-300/70 font-script">
+                      <div className="mt-1.5 pt-1.5 border-t border-white/[0.08]">
+                        <p className="text-xs sm:text-sm text-rose-300/80 font-script">
                           {formatTime(selectedTime)}
                         </p>
                       </div>
                     )}
                   </div>
 
-                  <div className="flex-1 backdrop-blur-xl bg-white/[0.03] border border-white/[0.06] rounded-xl sm:rounded-2xl p-3 sm:p-4 shadow-xl shadow-rose-900/20">
-                    <p className="text-[9px] sm:text-[10px] text-white/40 mb-2 font-medium tracking-wide text-center">See you in ❤️</p>
-                    <div className="flex items-center justify-center gap-1.5 sm:gap-2">
+                  <div className="flex-1 backdrop-blur-xl bg-white/[0.06] border border-rose-500/15 rounded-xl sm:rounded-2xl p-3.5 sm:p-5 shadow-xl shadow-rose-900/30">
+                    <p className="text-[10px] sm:text-xs text-white/50 mb-2 sm:mb-3 font-semibold tracking-wide text-center uppercase">See you in ❤️</p>
+                    <div className="flex items-center justify-center gap-1.5 sm:gap-2.5">
                       <CountdownTile value={days} label="Days" />
-                      <span className="text-xs sm:text-sm text-white/20 font-light -mt-4 sm:-mt-5">:</span>
+                      <span className="text-xs sm:text-base text-white/20 font-light -mt-4 sm:-mt-5">:</span>
                       <CountdownTile value={hours} label="Hrs" />
-                      <span className="text-xs sm:text-sm text-white/20 font-light -mt-4 sm:-mt-5">:</span>
+                      <span className="text-xs sm:text-base text-white/20 font-light -mt-4 sm:-mt-5">:</span>
                       <CountdownTile value={minutes} label="Min" />
-                      <span className="text-xs sm:text-sm text-white/20 font-light -mt-4 sm:-mt-5">:</span>
+                      <span className="text-xs sm:text-base text-white/20 font-light -mt-4 sm:-mt-5">:</span>
                       <CountdownTile value={seconds} label="Sec" />
                     </div>
                   </div>
@@ -246,14 +246,14 @@ export default function FinalScreen() {
               )}
 
               <motion.p
-                className="text-xs sm:text-sm text-rose-300/60 font-script px-2 leading-snug"
+                className="text-sm sm:text-base text-rose-300/70 font-script px-2 leading-snug"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 1.3 }}
               >
                 Thank you for saying YES, Shree.
                 <br />
-                <span className="text-rose-400/80">I seriously can't wait to see you.</span>
+                <span className="text-rose-400/90">I seriously can't wait to see you.</span>
               </motion.p>
 
               <motion.div
@@ -275,7 +275,7 @@ export default function FinalScreen() {
               </motion.div>
 
               <motion.p
-                className="text-[10px] sm:text-xs text-white/30 font-script animate-pulse"
+                className="text-[11px] sm:text-sm text-white/30 font-script animate-pulse"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 1.8 }}

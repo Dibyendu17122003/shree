@@ -52,7 +52,7 @@ export default function MainQuestion() {
     setShowTease(false);
     saveAnswer('main_question', 'Will you go on a date with me?', 'Yes', 'YES ❤️');
     updateState({ currentStep: 0, answers: { main_question: 'Yes' } });
-    setTimeout(() => navigate('/questions'), 2000);
+    setTimeout(() => navigate('/questions'), 4000);
   };
 
   const handleNo = () => {
