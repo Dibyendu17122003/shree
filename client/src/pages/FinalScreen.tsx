@@ -53,8 +53,8 @@ function PolaroidCard({ src, tilt, width, height, bottom }: { src: string; tilt:
       style={{ transform: `rotate(${tilt}deg)` }}
     >
       <div
-        className="bg-cover bg-center bg-no-repeat"
-        style={{ width, height, backgroundImage: `url(${src})` }}
+        className="bg-contain bg-center bg-no-repeat"
+        style={{ width, height, backgroundColor: 'rgba(0,0,0,0.08)', backgroundImage: `url(${src})` }}
       />
       <div className="flex items-center justify-center" style={{ height: bottom }}>
         <div className="w-3 h-3 rounded-full bg-rose-200/20" />
@@ -263,9 +263,9 @@ export default function FinalScreen() {
                       <PolaroidCard
                         src={`/images/photo${i + 1}.jpg`}
                         tilt={photo.tilt}
-                        width={200}
-                        height={200}
-                        bottom={32}
+                        width={240}
+                        height={180}
+                        bottom={30}
                       />
                     </motion.div>
                   </motion.div>
@@ -297,9 +297,9 @@ export default function FinalScreen() {
                       <PolaroidCard
                         src={`/images/photo${i + 3}.jpg`}
                         tilt={photo.tilt}
-                        width={120}
-                        height={105}
-                        bottom={20}
+                        width={130}
+                        height={100}
+                        bottom={18}
                       />
                     </motion.div>
                   </motion.div>
