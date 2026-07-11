@@ -181,6 +181,14 @@
     min-height: 44px;
     min-width: 44px;
   }
+
+  .touch-manipulation {
+    touch-action: manipulation;
+  }
+}
+
+button, a, select, input, textarea, [role="button"] {
+  touch-action: manipulation;
 }
 
 @keyframes gradient {

@@ -32,6 +32,20 @@ function parseMeetTime(time: string): number {
   }
 }
 
+const desktopPhotos = [
+  { angle: -22, x: -200, y: -70, delay: 0.15, rotate: -10 },
+  { angle: 24, x: 200, y: -80, delay: 0.35, rotate: 8 },
+  { angle: -28, x: -180, y: 90, delay: 0.55, rotate: -7 },
+  { angle: 22, x: 180, y: 80, delay: 0.75, rotate: 9 },
+  { angle: -10, x: -60, y: -155, delay: 0.95, rotate: -4 },
+];
+
+const mobilePhotos = [
+  { x: -105, y: -60, delay: 0.15, rotate: -8 },
+  { x: 105, y: -65, delay: 0.45, rotate: 7 },
+  { x: -95, y: 65, delay: 0.75, rotate: -5 },
+];
+
 export default function FinalScreen() {
   const { state } = useSession();
   const [showLetter, setShowLetter] = useState(false);
@@ -86,7 +100,7 @@ export default function FinalScreen() {
   }, []);
 
   return (
-    <div className="relative min-h-dvh flex items-center justify-center overflow-hidden bg-[#0a0a0f]">
+    <div className="relative min-h-dvh flex items-center justify-center bg-[#0a0a0f]">
       <FloatingHearts count={20} />
       <SakuraPetals count={12} />
       <Sparkles count={30} />
@@ -94,16 +108,16 @@ export default function FinalScreen() {
 
       <div className="absolute inset-0 bg-gradient-to-b from-rose-900/10 via-transparent to-purple-900/10" />
 
-      <div className="relative z-10 text-center px-4 sm:px-6 w-full max-w-lg mx-auto">
-        <AnimatePresence>
-          {!showEnvelope ? (
-            <motion.div
-              key="celebration"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="space-y-4 sm:space-y-6 py-8"
-            >
+      <AnimatePresence mode="wait">
+        {!showEnvelope ? (
+          <motion.div
+            key="celebration"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="relative z-10 text-center px-4 sm:px-6 w-full max-w-lg mx-auto"
+          >
+            <div className="space-y-4 sm:space-y-6 py-8">
               <motion.div
                 className="text-6xl sm:text-8xl"
                 animate={{ scale: [1, 1.15, 1], rotate: [0, -5, 5, 0] }}
@@ -187,152 +201,156 @@ export default function FinalScreen() {
                   </motion.span>
                 ))}
               </motion.div>
-            </motion.div>
-          ) : !letterOpened ? (
-            <motion.div
-              key="envelope"
-              className="flex flex-col items-center cursor-pointer py-8"
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={openLetter}
-              whileHover={{ scale: 1.03 }}
+            </div>
+          </motion.div>
+        ) : !letterOpened ? (
+          <motion.div
+            key="envelope"
+            className="relative z-10 w-full min-h-dvh flex flex-col items-center justify-center overflow-visible px-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.p
+              className="text-base sm:text-lg text-rose-300/80 font-script mb-4 sm:mb-8"
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
             >
-              <motion.p
-                className="text-base sm:text-lg text-rose-300/80 font-script mb-4 sm:mb-6"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.3 }}
-              >
-                I have something for you...
-              </motion.p>
+              I have something for you...
+            </motion.p>
 
-              <div className="relative">
-                {/* ==========================================
-                    POLAROID PHOTOS AROUND THE ENVELOPE
-                    Replace the placeholder bg gradients below
-                    with your own image URLs like:
-                    backgroundImage: 'url(https://your-image-url.jpg)'
-                    ========================================== */}
-                {[
-                  { angle: -18, x: -120, y: -50, delay: 0, rotate: -12 },
-                  { angle: 22, x: 120, y: -70, delay: 0.3, rotate: 8 },
-                  { angle: -25, x: -110, y: 70, delay: 0.6, rotate: -8 },
-                  { angle: 20, x: 110, y: 60, delay: 0.9, rotate: 10 },
-                  { angle: -15, x: -60, y: -110, delay: 1.2, rotate: -5 },
-                ].map((photo, i) => (
+            <div className="relative flex items-center justify-center overflow-visible" style={{ minHeight: 320, minWidth: 320 }}>
+              {/* Desktop Photos */}
+              <div className="hidden sm:block absolute inset-0 overflow-visible pointer-events-none">
+                {desktopPhotos.map((photo, i) => (
                   <motion.div
                     key={i}
-                    className="absolute hidden sm:block"
+                    className="absolute pointer-events-auto cursor-pointer"
                     style={{ left: '50%', top: '50%' }}
-                    initial={{ opacity: 0, scale: 0.6 }}
+                    initial={{ opacity: 0, scale: 0, x: 0, y: 0, rotate: 0 }}
                     animate={{
                       opacity: 1,
                       scale: 1,
                       x: photo.x,
-                      y: [photo.y, photo.y - 8, photo.y],
+                      y: [photo.y, photo.y - 6, photo.y],
+                      rotate: photo.rotate,
                     }}
                     transition={{
-                      opacity: { delay: 1.5 + photo.delay, duration: 0.5 },
-                      scale: { delay: 1.5 + photo.delay, duration: 0.5 },
-                      y: { duration: 3, repeat: Infinity, ease: 'easeInOut', delay: photo.delay },
+                      opacity: { delay: 0.6 + photo.delay, duration: 0.5, ease: 'easeOut' },
+                      scale: { delay: 0.6 + photo.delay, duration: 0.5, type: 'spring', stiffness: 180, damping: 14 },
+                      x: { delay: 0.6 + photo.delay, duration: 0.5, type: 'spring', stiffness: 180, damping: 14 },
+                      y: { duration: 3.5, repeat: Infinity, ease: 'easeInOut', delay: photo.delay },
+                      rotate: { delay: 0.6 + photo.delay, duration: 0.5, ease: 'easeOut' },
                     }}
                     onClick={openLetter}
+                    whileHover={{ scale: 1.08, transition: { duration: 0.2 } }}
+                    whileTap={{ scale: 0.97 }}
                   >
-                    <div
-                      className="w-20 h-24 sm:w-24 sm:h-28 rounded-lg bg-cover bg-center shadow-xl"
-                      style={{
-                          // 📷 Place your photo at: client/public/images/photo${i + 1}.jpg
-                        backgroundImage: `url(/images/photo${i + 1}.jpg)`,
-                        transform: `rotate(${photo.rotate}deg)`,
-                        border: '3px solid rgba(255,255,255,0.9)',
-                      }}
-                    >
-                      <div className="absolute inset-0 rounded-lg bg-gradient-to-t from-black/20 to-transparent" />
-                    </div>
-                  </motion.div>
-                ))}
-
-                {/* Mobile photos (simpler, 2 visible) */}
-                {[
-                  { x: -70, y: -40, delay: 0, rotate: -10 },
-                  { x: 70, y: -45, delay: 0.4, rotate: 8 },
-                  { x: -65, y: 45, delay: 0.8, rotate: -6 },
-                ].map((photo, i) => (
-                  <motion.div
-                    key={`m${i}`}
-                    className="absolute sm:hidden"
-                    style={{ left: '50%', top: '50%' }}
-                    initial={{ opacity: 0, scale: 0.6 }}
-                    animate={{
-                      opacity: 1,
-                      scale: 1,
-                      x: photo.x,
-                      y: [photo.y, photo.y - 5, photo.y],
-                    }}
-                    transition={{
-                      opacity: { delay: 1.5 + photo.delay, duration: 0.5 },
-                      scale: { delay: 1.5 + photo.delay, duration: 0.5 },
-                      y: { duration: 2.5, repeat: Infinity, ease: 'easeInOut', delay: photo.delay },
-                    }}
-                    onClick={openLetter}
-                  >
-                    <div
-                      className="w-14 h-16 rounded-md bg-cover bg-center shadow-lg"
-                      style={{
-                        backgroundImage: `url(/images/photo${i + 3}.jpg)`,
-                        transform: `rotate(${photo.rotate}deg)`,
-                        border: '2px solid rgba(255,255,255,0.9)',
-                      }}
-                    />
-                  </motion.div>
-                ))}
-
-                <motion.div
-                  animate={{ y: [0, -8, 0] }}
-                  transition={{ duration: 2, repeat: Infinity }}
-                >
-                  <div className="w-40 h-28 sm:w-48 sm:h-36 relative">
-                    <div className="absolute inset-0 bg-gradient-to-b from-rose-400 to-pink-600 rounded-t-2xl sm:rounded-t-3xl rounded-b-md shadow-2xl shadow-rose-500/30" />
-                    <div className="absolute top-0 left-0 right-0 h-0">
-                      <div className="w-40 sm:w-48 h-14 sm:h-18 bg-gradient-to-b from-rose-300 to-rose-400"
-                        style={{
-                          clipPath: 'polygon(0 100%, 50% 0%, 100% 100%)',
-                          transform: 'translateY(-0.5px)',
-                        }}
+                    <div className="bg-white rounded-[3px] shadow-2xl shadow-rose-900/30 overflow-hidden" style={{ transform: `rotate(${photo.rotate}deg)` }}>
+                      <div
+                        className="w-[132px] h-[165px] sm:w-[154px] sm:h-[192px] bg-cover bg-center bg-no-repeat"
+                        style={{ backgroundImage: `url(/images/photo${i + 1}.jpg)` }}
                       />
+                      <div className="h-8 sm:h-9 flex items-center justify-center">
+                        <div className="w-4 h-4 rounded-full bg-rose-200/30" />
+                      </div>
                     </div>
-                    <motion.div
-                      className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-3xl sm:text-4xl"
-                      animate={{ scale: [1, 1.15, 1] }}
-                      transition={{ duration: 1.5, repeat: Infinity }}
-                    >
-                      💌
-                    </motion.div>
-                    <div className="absolute bottom-3 sm:bottom-4 left-1/2 -translate-x-1/2">
-                      <div className="w-16 sm:w-24 h-0.5 sm:h-1 rounded-full bg-white/20" />
-                    </div>
-                  </div>
-                </motion.div>
+                  </motion.div>
+                ))}
               </div>
 
-              <motion.p
-                className="text-xs sm:text-sm text-white/40 mt-3 sm:mt-4"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.6 }}
+              {/* Mobile Photos */}
+              <div className="sm:hidden absolute inset-0 overflow-visible pointer-events-none">
+                {mobilePhotos.map((photo, i) => (
+                  <motion.div
+                    key={`m${i}`}
+                    className="absolute pointer-events-auto cursor-pointer"
+                    style={{ left: '50%', top: '50%' }}
+                    initial={{ opacity: 0, scale: 0, x: 0, y: 0, rotate: 0 }}
+                    animate={{
+                      opacity: 1,
+                      scale: 1,
+                      x: photo.x,
+                      y: [photo.y, photo.y - 4, photo.y],
+                      rotate: photo.rotate,
+                    }}
+                    transition={{
+                      opacity: { delay: 0.6 + photo.delay, duration: 0.4 },
+                      scale: { delay: 0.6 + photo.delay, duration: 0.4, type: 'spring', stiffness: 150, damping: 12 },
+                      x: { delay: 0.6 + photo.delay, duration: 0.4, type: 'spring', stiffness: 150, damping: 12 },
+                      y: { duration: 3, repeat: Infinity, ease: 'easeInOut', delay: photo.delay },
+                      rotate: { delay: 0.6 + photo.delay, duration: 0.4 },
+                    }}
+                    onClick={openLetter}
+                    whileHover={{ scale: 1.08, transition: { duration: 0.2 } }}
+                    whileTap={{ scale: 0.97 }}
+                  >
+                    <div className="bg-white rounded-[2px] shadow-xl shadow-rose-900/30 overflow-hidden" style={{ transform: `rotate(${photo.rotate}deg)` }}>
+                      <div
+                        className="w-[80px] h-[100px] bg-cover bg-center bg-no-repeat"
+                        style={{ backgroundImage: `url(/images/photo${i + 3}.jpg)` }}
+                      />
+                      <div className="h-5 flex items-center justify-center">
+                        <div className="w-2.5 h-2.5 rounded-full bg-rose-200/30" />
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+
+              {/* Envelope */}
+              <motion.div
+                className="relative z-10 cursor-pointer"
+                animate={{ y: [0, -6, 0] }}
+                transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
+                onClick={openLetter}
+                whileHover={{ scale: 1.04 }}
+                whileTap={{ scale: 0.97 }}
               >
-                Tap to open ❤️
-              </motion.p>
-            </motion.div>
-          ) : (
-            <motion.div
-              key="letter"
-              className="glass-card p-4 sm:p-8 max-w-lg mx-auto text-left relative"
-              initial={{ opacity: 0, y: 30, rotateX: 15 }}
-              animate={{ opacity: 1, y: 0, rotateX: 0 }}
-              transition={{ duration: 0.5, ease: 'easeOut' }}
+                <div className="w-40 h-28 sm:w-52 sm:h-36 relative">
+                  <div className="absolute inset-0 bg-gradient-to-b from-rose-400 to-pink-600 rounded-t-2xl sm:rounded-t-3xl rounded-b-md shadow-2xl shadow-rose-500/40" />
+                  <div className="absolute top-0 left-0 right-0 h-0">
+                    <div
+                      className="w-40 sm:w-52 h-14 sm:h-[74px] bg-gradient-to-b from-rose-300 to-rose-400"
+                      style={{
+                        clipPath: 'polygon(0 100%, 50% 0%, 100% 100%)',
+                        transform: 'translateY(-0.5px)',
+                      }}
+                    />
+                  </div>
+                  <motion.div
+                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-3xl sm:text-5xl"
+                    animate={{ scale: [1, 1.15, 1] }}
+                    transition={{ duration: 1.5, repeat: Infinity }}
+                  >
+                    💌
+                  </motion.div>
+                  <div className="absolute bottom-3 sm:bottom-4 left-1/2 -translate-x-1/2">
+                    <div className="w-16 sm:w-24 h-0.5 sm:h-1 rounded-full bg-white/20" />
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+
+            <motion.p
+              className="text-xs sm:text-sm text-white/40 mt-6 sm:mt-8"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 1.2 }}
             >
+              Tap the envelope to open your letter ❤️
+            </motion.p>
+          </motion.div>
+        ) : (
+          <motion.div
+            key="letter"
+            className="relative z-20 px-4 sm:px-6 w-full max-w-lg mx-auto py-8"
+            initial={{ opacity: 0, y: 30, rotateX: 15 }}
+            animate={{ opacity: 1, y: 0, rotateX: 0 }}
+            transition={{ duration: 0.5, ease: 'easeOut' }}
+          >
+            <motion.div className="glass-card p-4 sm:p-8 text-left">
               <motion.h2
                 className="text-2xl sm:text-3xl font-script text-gradient text-center mb-4 sm:mb-6"
                 initial={{ opacity: 0 }}
@@ -356,9 +374,9 @@ export default function FinalScreen() {
                 ))}
               </div>
             </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

@@ -132,7 +132,7 @@ export default function Dashboard() {
   );
 
   return (
-    <div className={`min-h-screen ${darkMode ? 'bg-[#0a0a0f]' : 'bg-[#fafafa]'} transition-colors duration-300`}>
+    <div className={`min-h-screen overflow-x-hidden ${darkMode ? 'bg-[#0a0a0f]' : 'bg-[#fafafa]'} transition-colors duration-300`}>
       <AnimatePresence>
         {notification && (
           <motion.div
@@ -157,12 +157,12 @@ export default function Dashboard() {
             </div>
 
             <div className="flex items-center gap-4">
-              <div className="flex bg-white/5 rounded-xl p-1">
+              <div className="flex bg-white/5 rounded-xl p-1 overflow-x-auto hide-scrollbar">
                 {(['overview', 'answers', 'analytics'] as const).map(tab => (
                   <button
                     key={tab}
                     onClick={() => setActiveTab(tab)}
-                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-all capitalize
+                    className={`whitespace-nowrap px-3 sm:px-4 py-2 rounded-lg text-sm font-medium transition-all capitalize
                       ${activeTab === tab
                         ? 'bg-rose-500 text-white'
                         : `${darkMode ? 'text-white/50 hover:text-white' : 'text-gray-500 hover:text-gray-900'}`
@@ -243,7 +243,7 @@ export default function Dashboard() {
                 placeholder="Search by session ID..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className={`flex-1 px-4 py-3 rounded-xl outline-none transition-all
+                className={`flex-1 px-4 py-3 rounded-xl outline-none transition-all touch-manipulation
                   ${darkMode
                     ? 'bg-white/5 border border-white/10 text-white placeholder:text-white/30 focus:border-rose-500/50'
                     : 'bg-white border border-gray-200 text-gray-900 placeholder:text-gray-400 focus:border-rose-500'
@@ -252,7 +252,7 @@ export default function Dashboard() {
               <select
                 value={filterAccepted}
                 onChange={(e) => setFilterAccepted(e.target.value)}
-                className={`px-4 py-3 rounded-xl outline-none transition-all
+                className={`px-4 py-3 rounded-xl outline-none transition-all touch-manipulation
                   ${darkMode
                     ? 'bg-white/5 border border-white/10 text-white focus:border-rose-500/50'
                     : 'bg-white border border-gray-200 text-gray-900 focus:border-rose-500'

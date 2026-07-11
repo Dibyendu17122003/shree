@@ -91,7 +91,7 @@ export default function AdminLogin() {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 onKeyDown={checkEnter}
-                className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-white/30 outline-none focus:border-rose-500/50 focus:bg-white/10 transition-all"
+                className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-white/30 outline-none focus:border-rose-500/50 focus:bg-white/10 transition-all touch-manipulation"
                 autoComplete="username"
               />
             </div>
@@ -102,7 +102,7 @@ export default function AdminLogin() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 onKeyDown={checkEnter}
-                className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-white/30 outline-none focus:border-rose-500/50 focus:bg-white/10 transition-all"
+                className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-white/30 outline-none focus:border-rose-500/50 focus:bg-white/10 transition-all touch-manipulation"
                 autoComplete="current-password"
               />
             </div>
