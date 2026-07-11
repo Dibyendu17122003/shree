@@ -33,18 +33,35 @@ function parseMeetTime(time: string): number {
 }
 
 const desktopPhotos = [
-  { angle: -22, x: -200, y: -70, delay: 0.15, rotate: -10 },
-  { angle: 24, x: 200, y: -80, delay: 0.35, rotate: 8 },
-  { angle: -28, x: -180, y: 90, delay: 0.55, rotate: -7 },
-  { angle: 22, x: 180, y: 80, delay: 0.75, rotate: 9 },
-  { angle: -10, x: -60, y: -155, delay: 0.95, rotate: -4 },
+  { radius: 230, startAngle: -25, tilt: -8, delay: 0.15 },
+  { radius: 240, startAngle: 38, tilt: 7, delay: 0.35 },
+  { radius: 220, startAngle: -118, tilt: -6, delay: 0.55 },
+  { radius: 235, startAngle: 148, tilt: 9, delay: 0.75 },
+  { radius: 195, startAngle: -72, tilt: -4, delay: 0.95 },
 ];
 
 const mobilePhotos = [
-  { x: -105, y: -60, delay: 0.15, rotate: -8 },
-  { x: 105, y: -65, delay: 0.45, rotate: 7 },
-  { x: -95, y: 65, delay: 0.75, rotate: -5 },
+  { radius: 120, startAngle: -22, tilt: -7, delay: 0.15 },
+  { radius: 125, startAngle: 42, tilt: 6, delay: 0.45 },
+  { radius: 115, startAngle: -138, tilt: -4, delay: 0.75 },
 ];
+
+function PolaroidCard({ src, tilt, width, height }: { src: string; tilt: number; width: number; height: number }) {
+  return (
+    <div
+      className="bg-white rounded-[3px] shadow-2xl shadow-rose-900/30 overflow-hidden"
+      style={{ transform: `rotate(${tilt}deg)` }}
+    >
+      <div
+        className="bg-cover bg-center bg-no-repeat"
+        style={{ width, height, backgroundImage: `url(${src})` }}
+      />
+      <div className="flex items-center justify-center" style={{ height: Math.round(height * 0.18) }}>
+        <div className="w-4 h-4 rounded-full bg-rose-200/30" />
+      </div>
+    </div>
+  );
+}
 
 export default function FinalScreen() {
   const { state } = useSession();
@@ -220,81 +237,69 @@ export default function FinalScreen() {
               I have something for you...
             </motion.p>
 
-            <div className="relative flex items-center justify-center overflow-visible" style={{ minHeight: 320, minWidth: 320 }}>
-              {/* Desktop Photos */}
+            <div className="relative flex items-center justify-center overflow-visible" style={{ minHeight: 360, minWidth: 360 }}>
+              {/* Desktop Photos — orbit around envelope */}
               <div className="hidden sm:block absolute inset-0 overflow-visible pointer-events-none">
                 {desktopPhotos.map((photo, i) => (
                   <motion.div
                     key={i}
                     className="absolute pointer-events-auto cursor-pointer"
-                    style={{ left: '50%', top: '50%' }}
-                    initial={{ opacity: 0, scale: 0, x: 0, y: 0, rotate: 0 }}
-                    animate={{
-                      opacity: 1,
-                      scale: 1,
-                      x: photo.x,
-                      y: [photo.y, photo.y - 6, photo.y],
-                      rotate: photo.rotate,
-                    }}
+                    style={{ left: '50%', top: '50%', transformOrigin: '0 0' }}
+                    initial={{ rotate: photo.startAngle, scale: 0, opacity: 0 }}
+                    animate={{ rotate: photo.startAngle + 360, scale: 1, opacity: 1 }}
                     transition={{
-                      opacity: { delay: 0.6 + photo.delay, duration: 0.5, ease: 'easeOut' },
-                      scale: { delay: 0.6 + photo.delay, duration: 0.5, type: 'spring', stiffness: 180, damping: 14 },
-                      x: { delay: 0.6 + photo.delay, duration: 0.5, type: 'spring', stiffness: 180, damping: 14 },
-                      y: { duration: 3.5, repeat: Infinity, ease: 'easeInOut', delay: photo.delay },
-                      rotate: { delay: 0.6 + photo.delay, duration: 0.5, ease: 'easeOut' },
+                      rotate: { duration: 40, repeat: Infinity, ease: 'linear', delay: 1.8 + photo.delay },
+                      scale: { duration: 0.5, type: 'spring', stiffness: 180, damping: 14, delay: 0.6 + photo.delay },
+                      opacity: { duration: 0.4, delay: 0.6 + photo.delay },
                     }}
                     onClick={openLetter}
-                    whileHover={{ scale: 1.08, transition: { duration: 0.2 } }}
-                    whileTap={{ scale: 0.97 }}
                   >
-                    <div className="bg-white rounded-[3px] shadow-2xl shadow-rose-900/30 overflow-hidden" style={{ transform: `rotate(${photo.rotate}deg)` }}>
-                      <div
-                        className="w-[132px] h-[165px] sm:w-[154px] sm:h-[192px] bg-cover bg-center bg-no-repeat"
-                        style={{ backgroundImage: `url(/images/photo${i + 1}.jpg)` }}
+                    <motion.div
+                      style={{ transform: `translateX(${photo.radius}px)` }}
+                      initial={{ rotate: -photo.startAngle }}
+                      animate={{ rotate: -photo.startAngle - 360 }}
+                      transition={{ duration: 40, repeat: Infinity, ease: 'linear', delay: 1.8 + photo.delay }}
+                    >
+                      <PolaroidCard
+                        src={`/images/photo${i + 1}.jpg`}
+                        tilt={photo.tilt}
+                        width={180}
+                        height={200}
                       />
-                      <div className="h-8 sm:h-9 flex items-center justify-center">
-                        <div className="w-4 h-4 rounded-full bg-rose-200/30" />
-                      </div>
-                    </div>
+                    </motion.div>
                   </motion.div>
                 ))}
               </div>
 
-              {/* Mobile Photos */}
+              {/* Mobile Photos — orbit around envelope */}
               <div className="sm:hidden absolute inset-0 overflow-visible pointer-events-none">
                 {mobilePhotos.map((photo, i) => (
                   <motion.div
                     key={`m${i}`}
                     className="absolute pointer-events-auto cursor-pointer"
-                    style={{ left: '50%', top: '50%' }}
-                    initial={{ opacity: 0, scale: 0, x: 0, y: 0, rotate: 0 }}
-                    animate={{
-                      opacity: 1,
-                      scale: 1,
-                      x: photo.x,
-                      y: [photo.y, photo.y - 4, photo.y],
-                      rotate: photo.rotate,
-                    }}
+                    style={{ left: '50%', top: '50%', transformOrigin: '0 0' }}
+                    initial={{ rotate: photo.startAngle, scale: 0, opacity: 0 }}
+                    animate={{ rotate: photo.startAngle + 360, scale: 1, opacity: 1 }}
                     transition={{
-                      opacity: { delay: 0.6 + photo.delay, duration: 0.4 },
-                      scale: { delay: 0.6 + photo.delay, duration: 0.4, type: 'spring', stiffness: 150, damping: 12 },
-                      x: { delay: 0.6 + photo.delay, duration: 0.4, type: 'spring', stiffness: 150, damping: 12 },
-                      y: { duration: 3, repeat: Infinity, ease: 'easeInOut', delay: photo.delay },
-                      rotate: { delay: 0.6 + photo.delay, duration: 0.4 },
+                      rotate: { duration: 35, repeat: Infinity, ease: 'linear', delay: 1.8 + photo.delay },
+                      scale: { duration: 0.4, type: 'spring', stiffness: 150, damping: 12, delay: 0.6 + photo.delay },
+                      opacity: { duration: 0.35, delay: 0.6 + photo.delay },
                     }}
                     onClick={openLetter}
-                    whileHover={{ scale: 1.08, transition: { duration: 0.2 } }}
-                    whileTap={{ scale: 0.97 }}
                   >
-                    <div className="bg-white rounded-[2px] shadow-xl shadow-rose-900/30 overflow-hidden" style={{ transform: `rotate(${photo.rotate}deg)` }}>
-                      <div
-                        className="w-[80px] h-[100px] bg-cover bg-center bg-no-repeat"
-                        style={{ backgroundImage: `url(/images/photo${i + 3}.jpg)` }}
+                    <motion.div
+                      style={{ transform: `translateX(${photo.radius}px)` }}
+                      initial={{ rotate: -photo.startAngle }}
+                      animate={{ rotate: -photo.startAngle - 360 }}
+                      transition={{ duration: 35, repeat: Infinity, ease: 'linear', delay: 1.8 + photo.delay }}
+                    >
+                      <PolaroidCard
+                        src={`/images/photo${i + 3}.jpg`}
+                        tilt={photo.tilt}
+                        width={110}
+                        height={125}
                       />
-                      <div className="h-5 flex items-center justify-center">
-                        <div className="w-2.5 h-2.5 rounded-full bg-rose-200/30" />
-                      </div>
-                    </div>
+                    </motion.div>
                   </motion.div>
                 ))}
               </div>
