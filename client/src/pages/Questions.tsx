@@ -277,7 +277,7 @@ export default function Questions() {
         currentStep: currentIndex + 1,
         dateAccepted: true,
       });
-      navigate('/final');
+      navigate('/final', { state: { date: updatedAnswers['date'], time: updatedAnswers['meet_time'] } });
       return;
     }
 

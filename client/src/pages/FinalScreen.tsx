@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useLocation } from 'react-router-dom';
 import FloatingHearts from '../components/animations/FloatingHearts';
 import SakuraPetals from '../components/animations/SakuraPetals';
 import Sparkles from '../components/animations/Sparkles';
@@ -99,6 +100,7 @@ function CountdownTile({ value, label }: { value: number; label: string }) {
 
 export default function FinalScreen() {
   const { state } = useSession();
+  const location = useLocation();
   const [showLetter, setShowLetter] = useState(false);
   const [letterOpened, setLetterOpened] = useState(false);
   const [showEnvelope, setShowEnvelope] = useState(false);
@@ -107,8 +109,8 @@ export default function FinalScreen() {
   const [minutes, setMinutes] = useState(0);
   const [seconds, setSeconds] = useState(0);
 
-  const selectedDate = state.answers?.date;
-  const selectedTime = state.answers?.meet_time;
+  const selectedDate = location.state?.date || state.answers?.date;
+  const selectedTime = location.state?.time || state.answers?.meet_time;
 
   const countdownTarget = useCallback(() => {
     if (selectedDate) {
