@@ -2,8 +2,6 @@ import { useState, useEffect, useCallback } from 'react';
 import { sessionApi, answersApi } from '../api/client';
 import type { StoredState } from '../types';
 
-const STORAGE_KEY = 'date_proposal_state';
-
 const getInitialState = (): StoredState => ({
   sessionId: '',
   currentStep: 0,
@@ -13,52 +11,27 @@ const getInitialState = (): StoredState => ({
 });
 
 export function useSession() {
-  const [state, setState] = useState<StoredState>(() => {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      try { return JSON.parse(stored); }
-      catch {}
-    }
-    return getInitialState();
-  });
-
-  const [loading, setLoading] = useState(!state.sessionId);
+  const [state, setState] = useState<StoredState>(getInitialState);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    localStorage.removeItem('date_proposal_state');
     if (!state.sessionId) {
       sessionApi.create()
         .then((data) => {
-          setState(prev => {
-            const newState = { ...prev, sessionId: data.sessionId };
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(newState));
-            return newState;
-          });
+          setState(prev => ({ ...prev, sessionId: data.sessionId }));
           setLoading(false);
         })
         .catch(() => {
           const fallbackId = 'local_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-          setState(prev => {
-            const newState = { ...prev, sessionId: fallbackId };
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(newState));
-            return newState;
-          });
+          setState(prev => ({ ...prev, sessionId: fallbackId }));
           setLoading(false);
         });
     }
   }, [state.sessionId]);
 
-  useEffect(() => {
-    if (state.sessionId) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-    }
-  }, [state]);
-
   const updateState = useCallback((updates: Partial<StoredState>) => {
-    setState(prev => {
-      const newState = { ...prev, ...updates };
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(newState));
-      return newState;
-    });
+    setState(prev => ({ ...prev, ...updates }));
   }, []);
 
   const saveAnswer = useCallback((questionKey: string, question: string, answer: string, answerValue?: string) => {
@@ -81,7 +54,6 @@ export function useSession() {
   }, [state.sessionId, state.questionStartTime, state.answers, updateState]);
 
   const reset = useCallback(() => {
-    localStorage.removeItem(STORAGE_KEY);
     setState(getInitialState());
     setLoading(true);
   }, []);
