@@ -243,9 +243,8 @@ export default function FinalScreen() {
                     <div
                       className="w-20 h-24 sm:w-24 sm:h-28 rounded-lg bg-cover bg-center shadow-xl"
                       style={{
-                        // 🔁 REPLACE this background with YOUR IMAGE URL:
-                        backgroundImage: `url(https://picsum.photos/seed/${150 + i}/200/250)`,
-                        // Example: backgroundImage: 'url(https://your-image-url.jpg)',
+                          // 📷 Place your photo at: client/public/images/photo${i + 1}.jpg
+                        backgroundImage: `url(/images/photo${i + 1}.jpg)`,
                         transform: `rotate(${photo.rotate}deg)`,
                         border: '3px solid rgba(255,255,255,0.9)',
                       }}
@@ -283,7 +282,8 @@ export default function FinalScreen() {
                     <div
                       className="w-14 h-16 rounded-md bg-cover bg-center shadow-lg"
                       style={{
-                        backgroundImage: `url(https://picsum.photos/seed/${200 + i}/150/200)`,
+                        // 📷 Place your photo at: client/public/images/photo${i + 7}.jpg
+                        backgroundImage: `url(/images/photo${i + 7}.jpg)`,
                         transform: `rotate(${photo.rotate}deg)`,
                         border: '2px solid rgba(255,255,255,0.9)',
                       }}
