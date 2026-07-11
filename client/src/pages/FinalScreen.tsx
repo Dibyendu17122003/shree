@@ -54,6 +54,13 @@ function PolaroidCard({ src, tilt, width, height, bottom }: { src: string; tilt:
   );
 }
 
+function parseMeetTime(time: string): number {
+  if (time === '10:00') return 10;
+  if (time === '13:00') return 13;
+  if (time === '17:00') return 17;
+  return 19;
+}
+
 function formatDate(dateStr: string): string {
   const [y, m, d] = dateStr.split('-').map(Number);
   return new Date(y, m - 1, d).toLocaleDateString('en-US', {
@@ -68,19 +75,73 @@ function formatTime(time: string): string {
   return time;
 }
 
+function CountdownTile({ value, label }: { value: number; label: string }) {
+  return (
+    <div className="flex flex-col items-center">
+      <div className="relative overflow-hidden rounded-xl bg-white/[0.04] border border-white/[0.06] w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center shadow-lg shadow-rose-900/10">
+        <AnimatePresence mode="popLayout">
+          <motion.span
+            key={value}
+            className="text-xl sm:text-2xl font-bold tabular-nums text-gradient"
+            initial={{ y: 16, opacity: 0, scale: 0.8 }}
+            animate={{ y: 0, opacity: 1, scale: 1 }}
+            exit={{ y: -16, opacity: 0, scale: 0.8 }}
+            transition={{ duration: 0.2, ease: 'easeOut' }}
+          >
+            {String(value).padStart(2, '0')}
+          </motion.span>
+        </AnimatePresence>
+      </div>
+      <span className="text-[10px] sm:text-xs text-white/40 mt-1.5 uppercase tracking-widest font-medium">{label}</span>
+    </div>
+  );
+}
+
 export default function FinalScreen() {
   const { state } = useSession();
   const [showLetter, setShowLetter] = useState(false);
   const [letterOpened, setLetterOpened] = useState(false);
   const [showEnvelope, setShowEnvelope] = useState(false);
+  const [days, setDays] = useState(0);
+  const [hours, setHours] = useState(0);
+  const [minutes, setMinutes] = useState(0);
+  const [seconds, setSeconds] = useState(0);
 
   const selectedDate = state.answers?.date;
   const selectedTime = state.answers?.meet_time;
+
+  const countdownTarget = useCallback(() => {
+    if (selectedDate) {
+      const [y, m, d] = selectedDate.split('-').map(Number);
+      return new Date(y, m - 1, d, parseMeetTime(selectedTime || ''), 0, 0, 0);
+    }
+    const fallback = new Date();
+    fallback.setDate(fallback.getDate() + 7);
+    fallback.setHours(parseMeetTime(selectedTime || ''), 0, 0, 0);
+    return fallback;
+  }, [selectedDate, selectedTime]);
 
   useEffect(() => {
     const timer = setTimeout(() => setShowEnvelope(true), 8000);
     return () => clearTimeout(timer);
   }, []);
+
+  useEffect(() => {
+    const update = () => {
+      const diff = countdownTarget().getTime() - Date.now();
+      if (diff <= 0) {
+        setDays(0); setHours(0); setMinutes(0); setSeconds(0);
+        return;
+      }
+      setDays(Math.floor(diff / 86400000));
+      setHours(Math.floor((diff % 86400000) / 3600000));
+      setMinutes(Math.floor((diff % 3600000) / 60000));
+      setSeconds(Math.floor((diff % 60000) / 1000));
+    };
+    update();
+    const interval = setInterval(update, 1000);
+    return () => clearInterval(interval);
+  }, [countdownTarget]);
 
   const openLetter = useCallback(() => {
     setLetterOpened(true);
@@ -168,11 +229,29 @@ export default function FinalScreen() {
                 </motion.div>
               )}
 
+              <motion.div
+                className="backdrop-blur-xl bg-white/[0.03] border border-white/[0.06] rounded-2xl sm:rounded-3xl p-4 sm:p-6 mx-auto max-w-xs sm:max-w-sm shadow-xl shadow-rose-900/20"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1.1, duration: 0.5 }}
+              >
+                <p className="text-xs sm:text-sm text-white/40 mb-3 sm:mb-4 font-medium tracking-wide">See you in ❤️</p>
+                <div className="flex items-center justify-center gap-3 sm:gap-4">
+                  <CountdownTile value={days} label="Days" />
+                  <span className="text-lg sm:text-xl text-white/20 font-light -mt-6 sm:-mt-7">:</span>
+                  <CountdownTile value={hours} label="Hrs" />
+                  <span className="text-lg sm:text-xl text-white/20 font-light -mt-6 sm:-mt-7">:</span>
+                  <CountdownTile value={minutes} label="Min" />
+                  <span className="text-lg sm:text-xl text-white/20 font-light -mt-6 sm:-mt-7">:</span>
+                  <CountdownTile value={seconds} label="Sec" />
+                </div>
+              </motion.div>
+
               <motion.p
                 className="text-base sm:text-lg text-rose-300/60 font-script px-2 leading-relaxed"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ delay: 1.1 }}
+                transition={{ delay: 1.3 }}
               >
                 Thank you for saying YES, Shree.
                 <br />
@@ -183,7 +262,7 @@ export default function FinalScreen() {
                 className="flex items-center justify-center gap-4 sm:gap-5"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ delay: 1.4 }}
+                transition={{ delay: 1.5 }}
               >
                 {['❤️', '💕', '💗', '💖', '💝'].map((emoji, i) => (
                   <motion.span
@@ -216,12 +295,14 @@ export default function FinalScreen() {
             exit={{ opacity: 0 }}
           >
             <motion.p
-              className="relative z-20 text-base sm:text-lg text-rose-300/80 font-script mb-4 sm:mb-8"
+              className="relative z-30 mb-4 sm:mb-8"
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
             >
-              I have something for you...
+              <span className="px-5 py-2 rounded-full bg-black/30 backdrop-blur-md inline-block text-base sm:text-lg text-rose-300/80 font-script shadow-lg shadow-rose-900/20">
+                I have something for you...
+              </span>
             </motion.p>
 
             <div className="relative flex items-center justify-center overflow-visible" style={{ minHeight: 360, minWidth: 360 }}>
@@ -324,12 +405,14 @@ export default function FinalScreen() {
             </div>
 
             <motion.p
-              className="relative z-20 text-xs sm:text-sm text-white/40 mt-6 sm:mt-8"
+              className="relative z-30 mt-6 sm:mt-8"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 1.2 }}
             >
-              Tap the envelope to open your letter ❤️
+              <span className="px-5 py-2 rounded-full bg-black/30 backdrop-blur-md inline-block text-xs sm:text-sm text-white/40 font-script shadow-lg shadow-rose-900/20">
+                Tap the envelope to open your letter ❤️
+              </span>
             </motion.p>
           </motion.div>
         ) : (
