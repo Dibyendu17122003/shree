@@ -43,7 +43,11 @@ export const getDashboardStats = async (_req: AuthRequest, res: Response) => {
 
 export const getAllAnswers = async (_req: AuthRequest, res: Response) => {
   try {
-    const answers = await QuestionAnswer.aggregate([
+    const sessions = await UserSession.find({ dateAccepted: true }).sort({ startTime: -1 }).limit(50);
+    const completedIds = sessions.map(s => s.sessionId);
+
+    const answerGroups = await QuestionAnswer.aggregate([
+      { $match: { sessionId: { $in: completedIds } } },
       { $sort: { timestamp: -1 } },
       {
         $group: {
@@ -53,16 +57,11 @@ export const getAllAnswers = async (_req: AuthRequest, res: Response) => {
         }
       },
       { $sort: { latestTimestamp: -1 } },
-      { $limit: 50 }
     ]);
-
-    const sessions = await UserSession.find({
-      sessionId: { $in: answers.map((a: any) => a._id) }
-    });
 
     const sessionMap = new Map(sessions.map(s => [s.sessionId, s]));
 
-    const result = answers.map((group: any) => {
+    const result = answerGroups.map((group: any) => {
       const session = sessionMap.get(group._id);
       const answerMap: Record<string, string> = {};
       group.answers.forEach((a: any) => {
