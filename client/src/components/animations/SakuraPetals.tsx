@@ -42,7 +42,7 @@ export default function SakuraPetals({ count = 15 }: { count?: number }) {
             opacity: 0.6,
           }}
           animate={{
-            y: [0, window.innerHeight + 100],
+            y: ['0px', '200vh'],
             x: [0, petal.drift],
             rotate: [petal.rotation, petal.rotation + 720],
             opacity: [0.6, 0.2, 0],

@@ -23,15 +23,6 @@ See you very soon, my love.
 Yours forever and always,
 The one who loves you endlessly ❤️`;
 
-function parseMeetTime(time: string): number {
-  switch (time) {
-    case '10:00': return 10;
-    case '13:00': return 13;
-    case '17:00': return 17;
-    default: return 19;
-  }
-}
-
 const desktopPhotos = [
   { radius: 280, startAngle: -20, tilt: -7, delay: 0.15 },
   { radius: 290, startAngle: 52, tilt: 6, delay: 0.35 },
@@ -63,57 +54,33 @@ function PolaroidCard({ src, tilt, width, height, bottom }: { src: string; tilt:
   );
 }
 
+function formatDate(dateStr: string): string {
+  const [y, m, d] = dateStr.split('-').map(Number);
+  return new Date(y, m - 1, d).toLocaleDateString('en-US', {
+    weekday: 'long', month: 'long', day: 'numeric', year: 'numeric',
+  });
+}
+
+function formatTime(time: string): string {
+  if (time === '10:00') return '10 AM ☀️';
+  if (time === '13:00') return '1 PM 🌤️';
+  if (time === '17:00') return '5 PM 🌆';
+  return time;
+}
+
 export default function FinalScreen() {
   const { state } = useSession();
   const [showLetter, setShowLetter] = useState(false);
   const [letterOpened, setLetterOpened] = useState(false);
-  const [timeLeft, setTimeLeft] = useState('');
   const [showEnvelope, setShowEnvelope] = useState(false);
 
   const selectedDate = state.answers?.date;
   const selectedTime = state.answers?.meet_time;
 
-  const countdownTarget = useCallback(() => {
-    if (selectedDate) {
-      const parts = selectedDate.split('-');
-      const target = new Date(
-        parseInt(parts[0]),
-        parseInt(parts[1]) - 1,
-        parseInt(parts[2]),
-        parseMeetTime(selectedTime || ''),
-        0, 0, 0
-      );
-      return target;
-    }
-    const fallback = new Date();
-    fallback.setDate(fallback.getDate() + 7);
-    fallback.setHours(parseMeetTime(selectedTime || ''), 0, 0, 0);
-    return fallback;
-  }, [selectedDate, selectedTime]);
-
   useEffect(() => {
     const timer = setTimeout(() => setShowEnvelope(true), 8000);
     return () => clearTimeout(timer);
   }, []);
-
-  useEffect(() => {
-    const update = () => {
-      const now = new Date();
-      const diff = countdownTarget().getTime() - now.getTime();
-      if (diff <= 0) {
-        setTimeLeft("It's today! ❤️");
-        return;
-      }
-      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-      setTimeLeft(`${days}d ${hours}h ${minutes}m ${seconds}s`);
-    };
-    update();
-    const interval = setInterval(update, 1000);
-    return () => clearInterval(interval);
-  }, [countdownTarget]);
 
   const openLetter = useCallback(() => {
     setLetterOpened(true);
@@ -138,7 +105,7 @@ export default function FinalScreen() {
             exit={{ opacity: 0 }}
             className="relative z-10 text-center px-4 sm:px-6 w-full max-w-lg mx-auto"
           >
-            <div className="space-y-4 sm:space-y-6 py-8">
+            <div className="space-y-5 sm:space-y-7 py-8">
               <motion.div
                 className="text-6xl sm:text-8xl"
                 animate={{ scale: [1, 1.15, 1], rotate: [0, -5, 5, 0] }}
@@ -148,7 +115,7 @@ export default function FinalScreen() {
               </motion.div>
 
               <motion.h1
-                className="text-4xl sm:text-6xl font-script text-gradient"
+                className="text-5xl sm:text-7xl font-script text-gradient"
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ type: 'spring', stiffness: 200, delay: 0.2 }}
@@ -157,69 +124,87 @@ export default function FinalScreen() {
               </motion.h1>
 
               <motion.p
-                className="text-xl sm:text-2xl font-display text-white/80"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
+                className="text-2xl sm:text-3xl font-display text-white/80 tracking-wide"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.5 }}
               >
                 SUSHAMA
               </motion.p>
 
-              <motion.p
-                className="text-lg sm:text-xl font-display text-gradient font-bold"
+              <motion.div
+                className="space-y-2"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.7 }}
               >
-                Our Date Is Official ❤️
-              </motion.p>
+                <p className="text-lg sm:text-xl font-display text-gradient font-bold">
+                  Our Date Is Official ❤️
+                </p>
+                <div className="w-16 h-[2px] bg-gradient-to-r from-rose-400 via-pink-400 to-rose-400 mx-auto rounded-full" />
+              </motion.div>
+
+              {selectedDate && (
+                <motion.div
+                  className="backdrop-blur-xl bg-white/[0.03] border border-white/[0.06] rounded-2xl sm:rounded-3xl p-5 sm:p-7 mx-auto max-w-xs sm:max-w-sm shadow-xl shadow-rose-900/20"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.9, duration: 0.5 }}
+                >
+                  <div className="flex items-center justify-center gap-2 mb-2 sm:mb-3">
+                    <span className="text-lg">📅</span>
+                    <span className="text-[10px] sm:text-xs text-white/40 uppercase tracking-widest font-medium">Date</span>
+                  </div>
+                  <p className="text-sm sm:text-lg text-white/90 font-script leading-relaxed">
+                    {formatDate(selectedDate)}
+                  </p>
+                  {selectedTime && (
+                    <div className="mt-2 sm:mt-3 pt-2 sm:pt-3 border-t border-white/[0.06]">
+                      <p className="text-sm sm:text-base text-rose-300/70 font-script">
+                        {formatTime(selectedTime)}
+                      </p>
+                    </div>
+                  )}
+                </motion.div>
+              )}
 
               <motion.p
-                className="text-base sm:text-lg text-rose-300/60 font-script px-2"
+                className="text-base sm:text-lg text-rose-300/60 font-script px-2 leading-relaxed"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ delay: 0.9 }}
+                transition={{ delay: 1.1 }}
               >
                 Thank you for saying YES, Shree.
-                <br />
-                My heart is yours forever.
                 <br />
                 <span className="text-rose-400/80">I seriously can't wait to see you.</span>
               </motion.p>
 
               <motion.div
-                className="glass-card p-4 sm:p-6 mt-4 sm:mt-6 mx-auto max-w-xs sm:max-w-sm"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 1.2 }}
-              >
-                <p className="text-xs sm:text-sm text-white/40 mb-1 sm:mb-2">See you in...</p>
-                <p className="text-2xl sm:text-3xl font-mono text-gradient font-bold">{timeLeft}</p>
-                {selectedDate && (
-                  <p className="text-[10px] sm:text-xs text-white/30 mt-1 sm:mt-2 font-script">
-                    {new Date(selectedDate).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
-                    {selectedTime ? ` at ${selectedTime.replace(':', ':')}` : ''}
-                  </p>
-                )}
-              </motion.div>
-
-              <motion.div
-                className="flex items-center justify-center gap-3 sm:gap-4 mt-4 sm:mt-6"
+                className="flex items-center justify-center gap-4 sm:gap-5"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ delay: 1.5 }}
+                transition={{ delay: 1.4 }}
               >
                 {['❤️', '💕', '💗', '💖', '💝'].map((emoji, i) => (
                   <motion.span
                     key={i}
                     className="text-xl sm:text-2xl"
-                    animate={{ y: [0, -12, 0] }}
-                    transition={{ duration: 1.5, delay: i * 0.15, repeat: Infinity }}
+                    animate={{ y: [0, -10, 0] }}
+                    transition={{ duration: 1.5, delay: i * 0.15, repeat: Infinity, ease: 'easeInOut' }}
                   >
                     {emoji}
                   </motion.span>
                 ))}
               </motion.div>
+
+              <motion.p
+                className="text-xs sm:text-sm text-white/30 font-script animate-pulse"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 1.8 }}
+              >
+                Get ready for something special...
+              </motion.p>
             </div>
           </motion.div>
         ) : !letterOpened ? (
@@ -231,7 +216,7 @@ export default function FinalScreen() {
             exit={{ opacity: 0 }}
           >
             <motion.p
-              className="text-base sm:text-lg text-rose-300/80 font-script mb-4 sm:mb-8"
+              className="relative z-20 text-base sm:text-lg text-rose-300/80 font-script mb-4 sm:mb-8"
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
@@ -339,7 +324,7 @@ export default function FinalScreen() {
             </div>
 
             <motion.p
-              className="text-xs sm:text-sm text-white/40 mt-6 sm:mt-8"
+              className="relative z-20 text-xs sm:text-sm text-white/40 mt-6 sm:mt-8"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 1.2 }}
@@ -355,7 +340,7 @@ export default function FinalScreen() {
             animate={{ opacity: 1, y: 0, rotateX: 0 }}
             transition={{ duration: 0.5, ease: 'easeOut' }}
           >
-            <motion.div className="glass-card p-4 sm:p-8 text-left">
+            <motion.div className="backdrop-blur-xl bg-white/[0.03] border border-white/[0.06] rounded-2xl sm:rounded-3xl p-5 sm:p-8 text-left shadow-xl shadow-rose-900/20">
               <motion.h2
                 className="text-2xl sm:text-3xl font-script text-gradient text-center mb-4 sm:mb-6"
                 initial={{ opacity: 0 }}

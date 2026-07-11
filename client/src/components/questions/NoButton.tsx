@@ -36,12 +36,6 @@ function getSafePosition() {
   return { top: `${h - btnH - 20}px`, left: `${w - btnW - 20}px` };
 }
 
-function getCurvedPath() {
-  const start = { x: 0, y: 0 };
-  const peak = { x: (Math.random() - 0.5) * 200, y: -Math.random() * 150 - 50 };
-  return [`${start.x}px ${start.y}px`, `${peak.x}px ${peak.y}px`, '0px 0px'];
-}
-
 interface Props {
   onNoClick: () => void;
   onExhausted?: () => void;
@@ -49,65 +43,43 @@ interface Props {
 }
 
 export default function NoButton({ onNoClick, onExhausted, disabled }: Props) {
-  const [clickCount, setClickCount] = useState(0);
   const [message, setMessage] = useState(MESSAGES[0]);
-  const [shake, setShake] = useState(false);
   const [hidden, setHidden] = useState(false);
   const [scale, setScale] = useState(1);
   const [msgProgress, setMsgProgress] = useState(0);
   const [floating, setFloating] = useState(false);
   const [floatPos, setFloatPos] = useState({ top: '50%', left: '50%' });
-  const [anticipating, setAnticipating] = useState(false);
-  const [arcPath, setArcPath] = useState<string[]>(['0px 0px']);
   const moveCountRef = useRef(0);
 
   const teleport = useCallback(() => {
     moveCountRef.current += 1;
     setFloatPos(getSafePosition());
-    setArcPath(getCurvedPath());
   }, []);
 
   const advance = useCallback(() => {
-    setClickCount(prev => {
-      const next = prev + 1;
-      if (next < MESSAGES.length) setMessage(MESSAGES[next]);
-      setMsgProgress(s => Math.min(1, s + 0.085));
-      setScale(s => Math.max(0.15, s - 0.07));
-      if (next >= 11) {
+    setScale(prev => {
+      const next = Math.max(0.15, prev - 0.07);
+      if (next <= 0.15) {
         setHidden(true);
         if (onExhausted) onExhausted();
       }
       return next;
     });
+    setMessage(prev => {
+      const idx = MESSAGES.indexOf(prev);
+      return idx < MESSAGES.length - 1 ? MESSAGES[idx + 1] : prev;
+    });
+    setMsgProgress(s => Math.min(1, s + 0.085));
   }, [onExhausted]);
 
-  const handleHover = useCallback(() => {
+  const handlePointerDown = useCallback((e: React.PointerEvent) => {
     if (disabled || hidden) return;
-    setAnticipating(true);
-    setTimeout(() => {
-      setAnticipating(false);
-      if (!floating) {
-        setFloating(true);
-        setTimeout(() => teleport(), 50);
-      } else {
-        teleport();
-        setShake(true);
-        setTimeout(() => setShake(false), 400);
-      }
-      advance();
-    }, 150);
-  }, [disabled, hidden, floating, teleport, advance]);
-
-  const handleNo = useCallback(() => {
-    if (disabled || hidden) return;
+    e.stopPropagation();
     advance();
-    if (!floating) {
-      setFloating(true);
-      setTimeout(() => teleport(), 50);
-    } else {
-      teleport();
-    }
-  }, [disabled, hidden, floating, teleport, advance]);
+    onNoClick();
+    if (!floating) setFloating(true);
+    teleport();
+  }, [disabled, hidden, floating, teleport, advance, onNoClick]);
 
   if (hidden) return null;
 
@@ -122,17 +94,13 @@ export default function NoButton({ onNoClick, onExhausted, disabled }: Props) {
 
   const btn = (inline: boolean) => (
     <motion.button
-      className="px-6 sm:px-8 py-3 sm:py-4 rounded-xl sm:rounded-2xl font-bold text-base sm:text-lg transition-all duration-300 bg-gradient-to-r from-rose-500 via-pink-500 to-rose-400 active:scale-95 whitespace-nowrap select-none"
+      className="px-6 sm:px-8 py-3 sm:py-4 rounded-xl sm:rounded-2xl font-bold text-base sm:text-lg bg-gradient-to-r from-rose-500 via-pink-500 to-rose-400 whitespace-nowrap select-none"
       style={{
         transform: `scale(${scale})`,
         opacity: Math.max(0.2, scale),
-        boxShadow: anticipating
-          ? '0 0 40px rgba(233,30,99,0.6), 0 0 80px rgba(233,30,99,0.3)'
-          : '0 0 30px rgba(233,30,99,0.4), 0 0 60px rgba(233,30,99,0.2)',
+        boxShadow: '0 0 30px rgba(233,30,99,0.4), 0 0 60px rgba(233,30,99,0.2)',
       }}
-      onClick={handleNo}
-      onPointerEnter={handleHover}
-      whileTap={{ scale: scale * 0.9 }}
+      onPointerDown={handlePointerDown}
       key={inline ? 'inline' : 'floating'}
     >
       No 💔
@@ -156,7 +124,6 @@ export default function NoButton({ onNoClick, onExhausted, disabled }: Props) {
                 y: '-50%',
                 scale: 1,
                 opacity: 1,
-                rotate: shake ? [0, -12, 12, -8, 8, 0] : anticipating ? [0, -3, 3, 0] : 0,
               }}
               transition={springTransition}
               key="floating-wrapper"
@@ -164,7 +131,7 @@ export default function NoButton({ onNoClick, onExhausted, disabled }: Props) {
               <div
                 className="relative"
                 style={{ padding: '24px', margin: '-24px' }}
-                onPointerEnter={handleHover}
+                onPointerDown={handlePointerDown}
               >
                 {btn(false)}
               </div>
@@ -180,7 +147,7 @@ export default function NoButton({ onNoClick, onExhausted, disabled }: Props) {
             </motion.div>
           ) : (
             <div
-              onPointerEnter={handleHover}
+              onPointerDown={handlePointerDown}
               className="relative"
             >
               {btn(true)}

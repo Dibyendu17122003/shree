@@ -6,9 +6,14 @@ interface Props {
   ready?: boolean;
 }
 
+function getStarCount() {
+  return typeof window !== 'undefined' && window.innerWidth < 640 ? 10 : 30;
+}
+
 export default function LoadingScreen({ onComplete, ready = true }: Props) {
   const [progress, setProgress] = useState(0);
   const [phase, setPhase] = useState<'loading' | 'fade'>('loading');
+  const [stars] = useState(getStarCount);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -81,7 +86,7 @@ export default function LoadingScreen({ onComplete, ready = true }: Props) {
             {Math.round(progress)}%
           </motion.p>
 
-          {[...Array(30)].map((_, i) => (
+          {[...Array(stars)].map((_, i) => (
             <motion.div
               key={i}
               className="absolute"

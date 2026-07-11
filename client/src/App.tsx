@@ -7,12 +7,13 @@ import AdminLogin from './pages/AdminLogin';
 import Dashboard from './pages/Dashboard';
 import { AnimatePresence } from 'framer-motion';
 import MouseTrail from './components/animations/MouseTrail';
+import { SessionProvider } from './hooks/useSession';
 
 export default function App() {
   const location = useLocation();
 
   return (
-    <>
+    <SessionProvider>
       <MouseTrail />
       <AnimatePresence mode="wait">
         <Routes location={location} key={location.pathname}>
@@ -25,6 +26,6 @@ export default function App() {
           <Route path="/admin/dashboard" element={<Dashboard />} />
         </Routes>
       </AnimatePresence>
-    </>
+    </SessionProvider>
   );
 }

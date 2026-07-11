@@ -39,7 +39,7 @@ export default function FloatingHearts({ count = 12 }: { count?: number }) {
             opacity: heart.opacity,
           }}
           animate={{
-            y: [0, -window.innerHeight - 100],
+            y: ['0px', '-200vh'],
             x: [0, (Math.random() - 0.5) * 200],
             rotate: [heart.rotation, heart.rotation + 360],
           }}
